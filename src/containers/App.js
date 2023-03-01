@@ -25,7 +25,7 @@ function App(){
     .then((users) => {
       setRobots(users);
     }); 
-  })
+  }, [])
 
   // render() {
     const filteredRobots = robots.filter((robot) => {
