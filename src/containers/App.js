@@ -7,36 +7,44 @@ import ErrorBoundary from "../components/Errorboundary";
 import SearchBox from "../components/SearchBox";
 import "./App.css";
 
-import { setSearchField } from "../actions";
+import { setSearchField, requestRobots } from "../actions";
 
 function App({ store }){
 
   const dispatch = useDispatch() 
-  const { searchField } = useSelector((state) => state)
+  const { searchField } = useSelector(
+    state => state.searchRobots
+) 
 
-  const [robots, setRobots] = useState([])
+
+  const { robots, isPending, error } = useSelector(
+    state => state.requestRobots
+)
 
  const onSearchChange = (event) => {
     dispatch(setSearchField(event.target.value))
   };
 
+  const onRequestRobots = () => {
+    dispatch(requestRobots())
+  }
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-    .then((response) => {
-      return response.json();
-    })
-    .then((users) => {
-      setRobots(users);
-    }); 
+    onRequestRobots() 
   }, [])
+
 
     const filteredRobots = robots.filter((robot) => {
       return robot.name
         .toLowerCase()
         .includes(searchField.toLowerCase());
     });
-    console.log(filteredRobots);
+    if (isPending){
+      return (
+        <h1>loading....</h1>
+      )
+    }
+    if (!error){
     return (
       <div className="tc">
         <h1 className="f1">RoboFriends</h1>
@@ -49,5 +57,6 @@ function App({ store }){
       </div>
     );
   }
+}
 
 export default App;
